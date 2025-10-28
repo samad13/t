@@ -299,7 +299,7 @@ curl -X GET "http://localhost:8000/api/v1/notes/${NOTE_ID}" \
 # }
 ```
 
-### 8. Delete a Note (admin only)
+### 6. Delete a Note (admin only)
 
 ```bash
 # Delete the note
