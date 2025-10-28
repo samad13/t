@@ -18,19 +18,20 @@ A production-ready, multi-tenant Notes API built with FastAPI and MongoDB, featu
 
 multi-tenant-notes-api/
 
+multi-tenant-notes-api/
 ├── app/                              # Core application package
 │   ├── main.py                       # FastAPI app entry point
 │   ├── core/                         # Core utilities
 │   │   ├── config.py                 # Application settings (Pydantic Settings)
-│   │   ├── security.py               # Password hashing & JWT token utilities
-│   │   └── auth.py                   # JWT authentication logic
+│   │   ├── security.py               # Password hashing (bcrypt + SHA-256) & JWT token generation
+│   │   └── auth.py                   # JWT decoding, user validation, and tenant isolation logic
 │   ├── api/                          # API layer
-│   │   ├── deps.py                   # Dependency injections (e.g., RBAC)
+│   │   ├── deps.py                   # Dependency injections (e.g., RBAC via `require_role`)
 │   │   └── v1/                       # Versioned API
 │   │       ├── router.py             # Main API router
 │   │       └── routes/               # Route handlers
 │   │           ├── organizations.py  # POST /organizations/
-│   │           ├── users.py          # POST /organizations/{id}/users/
+│   │           ├── users.py          # POST /organizations/{id}/users/ + /login
 │   │           └── notes.py          # Notes CRUD with RBAC
 │   ├── models/                       # Pydantic models with MongoDB ObjectId support
 │   │   ├── organization.py
@@ -39,10 +40,11 @@ multi-tenant-notes-api/
 │   ├── schemas/                      # Input validation schemas (DTOs)
 │   │   ├── organization.py
 │   │   ├── user.py
+│   │   ├── auth.py                   # ← Login request schema (UserLogin)
 │   │   └── note.py
 │   ├── services/                     # Business logic layer
 │   │   ├── organization_service.py
-│   │   ├── user_service.py
+│   │   ├── user_service.py           # User creation & authentication
 │   │   └── note_service.py
 │   └── db/                           # Database layer
 │       └── session.py                # Async Motor (MongoDB) client
