@@ -146,7 +146,7 @@ Example workflow:
 
 ### 1. Create an Organization
 
-
+```bash
 curl -X POST "http://localhost:8000/api/v1/organizations" \
   -H "Content-Type: application/json" \
   -d '{
@@ -157,6 +157,8 @@ curl -X POST "http://localhost:8000/api/v1/organizations" \
   "id": "65f1a2b3c4d5e6f7g8h9i0j1",
   "name": "Samad Limited"
 }
+
+```
 
 ```bash
 curl -X POST "http://localhost:8000/api/v1/organizations" \
