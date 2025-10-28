@@ -17,8 +17,6 @@ A production-ready, multi-tenant Notes API built with FastAPI and MongoDB, featu
 ```
 
 multi-tenant-notes-api/
-
-multi-tenant-notes-api/
 ├── app/                              # Core application package
 │   ├── main.py                       # FastAPI app entry point
 │   ├── core/                         # Core utilities
@@ -103,17 +101,18 @@ pytest tests/ -v
 
 ## 📡 API Endpoints
 
-### Organizationshttp://localhost:8000/api/v1/organizations/
+### Organizations
 
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
 | POST | `/api/v1/organizations` | Create organization | No |
 
-### Userslocalhost:8000/api/v1/organizations/<ORG_ID>/users/
+### Users
 
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
 | POST | `/api/v1/organizations/{org_id}/users` | Create user | No |
+| POST | `/api/v1/organizations/{org_id}/users/login` | Login user | No |
 
 ### Notes
 
@@ -214,6 +213,30 @@ curl -X POST "http://localhost:8000/api/v1/organizations/${ORG_ID}/users" \
 #  "user_id": "65f1a2b3c4d5e6f7g8h9i0j1",
 #   "email": "reader@samad.com",
 #   "role": "reader",
+#   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+# }
+
+# Save token for subsequent requests
+TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+
+```bash
+# login user
+ORG_ID="65f1a2b3c4d5e6f7g8h9i0j1"
+
+curl -X POST "http://localhost:8000/api/v1/organizations/${ORG_ID}/users/login" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@samad.com",
+    "password": "SecurePass123!",
+  }'
+
+# Response:
+# {
+#  "user_id": "65f1a2b3c4d5e6f7g8h9i0j1",
+#   "email": "admin@samad.com",
+#   "role": "admin",
 #   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
 # }
 
