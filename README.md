@@ -132,6 +132,32 @@ pytest tests/ -v
 
 ## 📝 Usage Examples
 
+## 💡 Note About Examples
+
+The IDs in these examples (like `65f1a2b3c4d5e6f7g8h9i0j1`) are placeholders. 
+When you run the commands:
+
+1. **Save the response IDs** from create operations
+2. **Use those actual IDs** in subsequent commands
+3. **Replace placeholders** with your real values
+
+Example workflow:
+```bash
+# Step 1: Create and capture the ID
+RESPONSE=$(curl -s -X POST "http://localhost:8000/api/v1/notes" \
+  -H "Authorization: Bearer ${TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{"title": "My Note", "content": "Content"}')
+
+# Step 2: Extract the ID (requires jq)
+NOTE_ID=$(echo $RESPONSE | jq -r '.id')
+
+# Step 3: Use the real ID
+curl -X GET "http://localhost:8000/api/v1/notes/${NOTE_ID}" \
+  -H "Authorization: Bearer ${TOKEN}"
+```
+
+
 ### 1. Create an Organization
 
 ```bash
