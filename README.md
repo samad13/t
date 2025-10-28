@@ -142,21 +142,6 @@ When you run the commands:
 3. **Replace placeholders** with your real values
 
 Example workflow:
-```bash
-# Step 1: Create and capture the ID
-RESPONSE=$(curl -s -X POST "http://localhost:8000/api/v1/notes" \
-  -H "Authorization: Bearer ${TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d '{"title": "My Note", "content": "Content"}')
-
-# Step 2: Extract the ID (requires jq)
-NOTE_ID=$(echo $RESPONSE | jq -r '.id')
-
-# Step 3: Use the real ID
-curl -X GET "http://localhost:8000/api/v1/notes/${NOTE_ID}" \
-  -H "Authorization: Bearer ${TOKEN}"
-```
-
 
 ### 1. Create an Organization
 
