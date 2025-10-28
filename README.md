@@ -17,43 +17,47 @@ A production-ready, multi-tenant Notes API built with FastAPI and MongoDB, featu
 ```
 
 multi-tenant-notes-api/
-├── app/                              # Core application package
-│   ├── main.py                       # FastAPI app entry point
-│   ├── core/                         # Core utilities
-│   │   ├── config.py                 # Application settings (Pydantic Settings)
-│   │   ├── security.py               # Password hashing (bcrypt + SHA-256) & JWT token generation
-│   │   └── auth.py                   # JWT decoding, user validation, and tenant isolation logic
-│   ├── api/                          # API layer
-│   │   ├── deps.py                   # Dependency injections (e.g., RBAC via `require_role`)
-│   │   └── v1/                       # Versioned API
-│   │       ├── router.py             # Main API router
-│   │       └── routes/               # Route handlers
-│   │           ├── organizations.py  # POST /organizations/
-│   │           ├── users.py          # POST /organizations/{id}/users/ + /login
-│   │           └── notes.py          # Notes CRUD with RBAC
+├── app/                              # Core FastAPI application package
+│   ├── main.py                       # FastAPI app factory and entry point
+│   ├── core/                         # Core utilities and cross-cutting concerns
+│   │   ├── config.py                 # Pydantic Settings for env/config management
+│   │   ├── security.py               # Password hashing (SHA-256 + bcrypt) and JWT token utilities
+│   │   └── auth.py                   # JWT validation, user lookup, and tenant/org isolation logic
+│   ├── api/                          # API layer (routers and dependencies)
+│   │   ├── deps.py                   # Dependency injections (e.g., `require_role` for RBAC)
+│   │   └── v1/                       # Versioned API (v1)
+│   │       ├── router.py             # Main API router that includes all route modules
+│   │       └── routes/               # Route handler modules
+│   │           ├── organizations.py  # POST /api/v1/organizations/ → create org
+│   │           ├── users.py          # POST /api/v1/organizations/{org_id}/users/ (register) + /login
+│   │           └── notes.py          # Notes CRUD with RBAC: POST, GET, DELETE
 │   ├── models/                       # Pydantic models with MongoDB ObjectId support
-│   │   ├── organization.py
-│   │   ├── user.py
-│   │   └── note.py
-│   ├── schemas/                      # Input validation schemas (DTOs)
-│   │   ├── organization.py
-│   │   ├── user.py
-│   │   ├── auth.py                   # ← Login request schema (UserLogin)
-│   │   └── note.py
-│   ├── services/                     # Business logic layer
-│   │   ├── organization_service.py
-│   │   ├── user_service.py           # User creation & authentication
-│   │   └── note_service.py
-│   └── db/                           # Database layer
-│       └── session.py                # Async Motor (MongoDB) client
-├── tests/                            # Automated tests
-│   └── test_notes.py                 # Full RBAC & multi-tenancy test suite
-├── .env                              # Environment variables (optional)
-├── requirements.txt                  # Python dependencies
-├── Dockerfile                        # Container build definition
-├── docker-compose.yml                # Local dev with MongoDB
-├── README.md                         # Setup, usage, and examples
-└── pytest.ini                        # Test configuration (async mode)
+│   │   ├── common.py                 # Custom PyObjectId type (Pydantic v2 compatible)
+│   │   ├── organization.py           # OrganizationModel (id, name)
+│   │   ├── user.py                   # UserModel (email, hashed_password, role, org_id)
+│   │   └── note.py                   # NoteModel (title, content, org_id, owner_id)
+│   ├── schemas/                      # Input validation schemas (DTOs for requests)
+│   │   ├── organization.py           # OrganizationCreate (name)
+│   │   ├── user.py                   # UserCreate (email, password, role)
+│   │   ├── auth.py                   # UserLogin (email, password)
+│   │   └── note.py                   # NoteCreate (title, content)
+│   ├── services/                     # Business logic layer (decoupled from API)
+│   │   ├── organization_service.py   # create_organization()
+│   │   ├── user_service.py           # create_user(), authenticate_user()
+│   │   └── note_service.py           # create_note(), get_notes_by_org(), delete_note(), etc.
+│   └── db/                           # Database abstraction layer
+│       └── session.py                # Async Motor client (`get_db()` and `get_test_db()`)
+├── tests/                            # Automated test suite
+│   ├── conftest.py                   # Global test config (Windows event loop fix)
+│   ├── test_organizations.py         # Tests for POST /organizations/
+│   ├── test_users.py                 # Tests for user registration and login (valid/invalid cases)
+│   └── test_notes.py                 # Full RBAC + multi-tenancy test: CRUD, roles, org isolation
+├── .env                              # Local environment variables (e.g., MONGODB_URL, SECRET_KEY)
+├── requirements.txt                  # Python dependencies (FastAPI, motor, bcrypt, pytest, etc.)
+├── Dockerfile                        # Container definition for production-like builds
+├── docker-compose.yml                # Local development with MongoDB container
+├── README.md                         # Project documentation: setup, usage, examples, compliance
+└── pytest.ini                        # Test configuration: asyncio mode, warning filters
 ```
 
 ## 🚀 Quick Start
@@ -145,20 +149,6 @@ When you run the commands:
 Example workflow:
 
 ### 1. Create an Organization
-
-```bash
-curl -X POST "http://localhost:8000/api/v1/organizations" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Samad Limited"
-  }'
-
-  {
-  "id": "65f1a2b3c4d5e6f7g8h9i0j1",
-  "name": "Samad Limited"
-}
-
-```
 
 ```bash
 curl -X POST "http://localhost:8000/api/v1/organizations" \
@@ -327,3 +317,7 @@ curl -X DELETE "http://localhost:8000/api/v1/notes/${NOTE_ID}" \
 ```bash
 # Run all tests
 pytest tests/ -v
+
+# Run specific test file
+pytest tests/test_api.py -v
+```
