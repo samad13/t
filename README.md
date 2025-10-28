@@ -313,6 +313,3 @@ curl -X DELETE "http://localhost:8000/api/v1/notes/${NOTE_ID}" \
 ```bash
 # Run all tests
 pytest tests/ -v
-
-# Run specific test
-pytest tests/test_api
