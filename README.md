@@ -173,6 +173,14 @@ curl -X POST "http://localhost:8000/api/v1/organizations/${ORG_ID}/users" \
     "role": "admin"
   }'
 
+# Response:
+# {
+#  "user_id": "65f1a2b3c4d5e6f7g8h9i0j1",
+#   "email": "admin@samad.com",
+#   "role": "admin",
+#   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+# }
+
 # Create a writer
 curl -X POST "http://localhost:8000/api/v1/organizations/${ORG_ID}/users" \
   -H "Content-Type: application/json" \
@@ -181,6 +189,14 @@ curl -X POST "http://localhost:8000/api/v1/organizations/${ORG_ID}/users" \
     "password": "SecurePass123!",
     "role": "writer"
   }'
+
+# Response:
+# {
+#  "user_id": "65f1a2b3c4d5e6f7g8h9i0j1",
+#   "email": "writer@samad.com",
+#   "role": "writer",
+#   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+# }
 
 # Create a reader
 curl -X POST "http://localhost:8000/api/v1/organizations/${ORG_ID}/users" \
@@ -193,8 +209,10 @@ curl -X POST "http://localhost:8000/api/v1/organizations/${ORG_ID}/users" \
 
 # Response:
 # {
+#  "user_id": "65f1a2b3c4d5e6f7g8h9i0j1",
+#   "email": "reader@samad.com",
+#   "role": "reader",
 #   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-#   "token_type": "bearer"
 # }
 
 # Save token for subsequent requests
@@ -212,6 +230,12 @@ curl -X POST "http://localhost:8000/api/v1/notes" \
     "title": "Project Planning",
     "content": "Initial project requirements and timeline"
   }'
+
+# Response:
+# {
+#   "id": "65f1a2b3c4d5e6f7g8h9i0j1",
+#   "title": "Project Planning",
+# }
 ```
 
 ### 4. List Notes
@@ -220,6 +244,14 @@ curl -X POST "http://localhost:8000/api/v1/notes" \
 # List all notes in the organization
 curl -X GET "http://localhost:8000/api/v1/notes" \
   -H "Authorization: Bearer ${TOKEN}"
+
+# Response:
+[
+# {
+#   "id": "65f1a2b3c4d5e6f7g8h9i0j1",
+#   "title": "Project Planning",
+# }
+]
 ```
 
 ### 5. Get Specific Note
@@ -229,6 +261,13 @@ NOTE_ID="65f1a2b3c4d5e6f7g8h9i0j2"
 
 curl -X GET "http://localhost:8000/api/v1/notes/${NOTE_ID}" \
   -H "Authorization: Bearer ${TOKEN}"
+
+# Response:
+# {
+#   "id": "65f1a2b3c4d5e6f7g8h9i0j1",
+#   "title": "Project Planning",
+#   "content": "Initial project requirements and timeline"
+# }
 ```
 
 ### 8. Delete a Note (admin only)
@@ -237,6 +276,11 @@ curl -X GET "http://localhost:8000/api/v1/notes/${NOTE_ID}" \
 # Delete the note
 curl -X DELETE "http://localhost:8000/api/v1/notes/${NOTE_ID}" \
   -H "Authorization: Bearer ${ADMIN_TOKEN}"
+
+# Response:
+# {
+#   "detail": "Note deleted"
+# }
 ```
 
 ## 🧪 Running Tests
